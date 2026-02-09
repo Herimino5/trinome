@@ -1,6 +1,8 @@
 <?php
 
 use app\controllers\AdminController;
+use app\controllers\ProductController;
+use app\models\Categorie;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -22,6 +24,42 @@ $router->group('', function(Router $router) use ($app) {
 	$router->get('/user/login', function() use ($app) {
 		$app->render('user/login', [ 'message' => 'Welcome to the user login page!' ]);
 	});
+
+	// =============================================
+	// Routes Product (CRUD)
+	// =============================================
+	$productController = new ProductController($app->db());
+
+	// Liste des produits
+	$router->get('/products', [ $productController, 'index' ]);
+
+	// Formulaire de création (affichage)
+	$router->get('/products/create', function() use ($app) {
+		$categorieModel = new \app\models\Categorie($app->db());
+		$categories = $categorieModel->getAll();
+		$app->render('product/form.php', [ 'categories' => $categories ]);
+	});
+
+	// Créer un produit (traitement)
+	$router->post('/products/create', [ $productController, 'create' ]);
+
+	// Formulaire de modification (affichage)
+	$router->get('/products/edit/@id', function($id) use ($app) {
+		$productModel = new \app\models\Product($app->db());
+		$categorieModel = new \app\models\Categorie($app->db());
+		$product = $productModel->getById($id);
+		$categories = $categorieModel->getAll();
+		$app->render('product/form.php', [ 'product' => $product, 'categories' => $categories ]);
+	});
+
+	// Modifier un produit (traitement)
+	$router->post('/products/update/@id', [ $productController, 'update' ]);
+
+	// Supprimer un produit
+	$router->get('/products/delete/@id', [ $productController, 'delete' ]);
+
+	// Afficher un produit (détails) — doit être après les routes plus spécifiques
+	$router->get('/products/@id', [ $productController, 'show' ]);
 
 
 

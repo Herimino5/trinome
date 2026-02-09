@@ -1,0 +1,29 @@
+body{
+    background-color: #E5E5E5;
+    font-family: Arial, sans-serif;
+}
+.fond-jaune {
+    background-color: #FCA311;
+    padding: 20px;
+    border-radius: 10px;
+}
+.fond-dark {
+    background-color: #14213D;
+    color: white;
+    border-radius: 10px;
+    
+}
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.card-img-top {
+    object-fit: cover;
+    height: 200px;
+}
+.card-footer a {
+    text-decoration: none;
+}

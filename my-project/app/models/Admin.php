@@ -9,7 +9,12 @@ class Admin
     {
         $this->db = $pdo;
     }
-
+    public function verif($adminname, $password){
+        $sql = "SELECT * FROM admin WHERE adminname = :adminname and password = :password";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['adminname' => $adminname, 'password' => $password]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
     public function create($adminname, $password)
     {
         $sql = "INSERT INTO admin (adminname, password) VALUES (:adminname, :password)";

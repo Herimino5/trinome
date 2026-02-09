@@ -27,6 +27,7 @@
 
         <button type="submit" class="btn btn-primary w-100">Se connecter</button>
     </form>
+    
 </div>
 
 </body>

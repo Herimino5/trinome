@@ -1,6 +1,6 @@
 <?php
 
-use app\controllers\ApiExampleController;
+use app\controllers\AdminController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -13,9 +13,12 @@ use flight\net\Router;
 // This wraps all routes in the group with the SecurityHeadersMiddleware
 $router->group('', function(Router $router) use ($app) {
 	$router->get('/', function() use ($app) {
-		$app->render('index', [ 'message' => 'Welcome to your FlightPHP app! You are gonna do great things!' ]);
+		$app->render('admin/index', [ 'message' => 'Welcome to your FlightPHP app! You are gonna do great things!' ]);
 	});
-
+	$router->post('/admin/login',[ AdminController::class, 'loginController' ]);
+	$router->get('/admin/dashbord', function() use ($app) {
+		$app->render('admin/dashbord', [ 'message' => 'Welcome to the admin dashboard!' ]);
+	});
 
 
 

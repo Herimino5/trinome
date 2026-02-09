@@ -5,6 +5,11 @@ create table admin (
     adminname varchar(50) not null unique,
     password varchar(255) not null
 );
+INSERT INTO admin (adminname, password)
+VALUES (
+  'admin',
+  'admin'
+);
 create table user (
     id int primary key auto_increment,
     username varchar(50) not null unique,

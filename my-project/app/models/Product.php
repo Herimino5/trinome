@@ -43,4 +43,18 @@ class Product
         $stmt = $this->db->prepare("DELETE FROM product WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
+    public function update($id, $name, $description, $price, $category_id)
+    {
+        $sql = "UPDATE product 
+                SET name = :name, description = :description, price = :price, category_id = :category_id 
+                WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            'id' => $id,
+            'name' => $name,
+            'description' => $description,
+            'price' => $price,
+            'category_id' => $category_id
+        ]);
+    }
 }

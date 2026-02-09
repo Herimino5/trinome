@@ -27,7 +27,7 @@
 
         <button type="submit" class="btn btn-primary w-100">Se connecter</button>
     </form>
-    
+    <a href="<?= BASE_URL ?>user/login" class="btn btn-link">Créer un compte</a>
 </div>
 
 </body>

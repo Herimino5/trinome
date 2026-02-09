@@ -19,6 +19,9 @@ $router->group('', function(Router $router) use ($app) {
 	$router->get('/admin/dashbord', function() use ($app) {
 		$app->render('admin/dashbord', [ 'message' => 'Welcome to the admin dashboard!' ]);
 	});
+	$router->get('/user/login', function() use ($app) {
+		$app->render('user/login', [ 'message' => 'Welcome to the user login page!' ]);
+	});
 
 
 

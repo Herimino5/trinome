@@ -29,14 +29,10 @@ create table product (
     description varchar(255) not null,
     price decimal(10, 2) not null,
     category_id int not null,
+    product_image varchar(255) not null,
     foreign key (category_id) references category(id)
 );
-create table product_image (
-    id int primary key auto_increment,
-    product_id int not null,
-    image_url varchar(255) not null,
-    foreign key (product_id) references product(id)
-);
+
 create table product_user (
     id int primary key auto_increment,
     product_id int not null,

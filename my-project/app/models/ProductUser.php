@@ -35,5 +35,19 @@ class ProductUser
         $stmt = $this->db->prepare("DELETE FROM product_user WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
+
+    // Échanger les propriétaires de deux produits
+    public function swapOwners($product1, $product2) {
+        // Récupérer les owners actuels
+        $stmt = $this->db->prepare("SELECT user_id FROM product_user WHERE product_id = :pid");
+        $stmt->execute(['pid' => $product1]);
+        $owner1 = $stmt->fetchColumn();
+        $stmt->execute(['pid' => $product2]);
+        $owner2 = $stmt->fetchColumn();
+        // Mettre à jour
+        $stmt = $this->db->prepare("UPDATE product_user SET user_id = :uid WHERE product_id = :pid");
+        $stmt->execute(['uid' => $owner2, 'pid' => $product1]);
+        $stmt->execute(['uid' => $owner1, 'pid' => $product2]);
+    }
 }
 ?>

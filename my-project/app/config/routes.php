@@ -29,9 +29,16 @@ $router->group('', function(Router $router) use ($app) {
 	$router->get('/admin/dashbord', function() use ($app) {
 		$app->render('admin/dashbord', [ 'message' => 'Welcome to the admin dashboard!' ]);
 	});
-	$router->get('/user/login', function() use ($app) {
-		$app->render('user/login', [ 'message' => 'Welcome to the user login page!' ]);
-	});
+	
+	// =============================================
+	// Routes User (Login, Register, Logout)
+	// =============================================
+	$userController = new UserController($app);
+	$router->get('/user/login', [ $userController, 'loginPage' ]);
+	$router->post('/user/login', [ $userController, 'loginController' ]);
+	$router->get('/user/register', [ $userController, 'registerPage' ]);
+	$router->post('/user/register', [ $userController, 'registerController' ]);
+	$router->get('/user/logout', [ $userController, 'logout' ]);
 
 	// =============================================
 	// Routes Admin Categories (CRUD)
@@ -83,6 +90,19 @@ $router->group('', function(Router $router) use ($app) {
 
 	// Afficher un produit (détails) — doit être après les routes plus spécifiques
 	$router->get('/products/@id', [ $productController, 'show' ]);
+
+	// =============================================
+	// Routes User Products
+	// =============================================
+	$router->get('/user/products', [ $productController, 'userProducts' ]);
+
+	// =============================================
+	// Routes Product Exchange
+	// =============================================
+	$router->post('/exchange/propose', [ $exchangeController, 'propose' ]);
+	$router->get('/exchange/received', [ $exchangeController, 'received' ]);
+	$router->post('/exchange/accept/@id', [ $exchangeController, 'accept' ]);
+	$router->post('/exchange/reject/@id', [ $exchangeController, 'reject' ]);
 
 
 

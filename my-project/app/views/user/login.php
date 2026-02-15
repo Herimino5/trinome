@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion Utilisateur</title>
-    <link href="<?= BASE_URL ?>public/css/bootstrap.min.css" rel="stylesheet">
-    <link href="<?= BASE_URL ?>public/css/products.css" rel="stylesheet">
-    <!-- Bootstrap Icons offline option: <link href="<?= BASE_URL ?>public/css/bootstrap-icons.css" rel="stylesheet"> -->
+    <link href="<?= BASE_URL ?>css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
@@ -114,7 +112,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?= BASE_URL ?>public/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= BASE_URL ?>js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

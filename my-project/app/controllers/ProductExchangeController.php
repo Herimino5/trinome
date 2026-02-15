@@ -65,4 +65,14 @@ class ProductExchangeController {
         }
         Flight::redirect('/exchange/received');
     }
+
+    // Accepter une proposition
+    public function accept($id) {
+        $this->updateStatus($id, 'accept');
+    }
+
+    // Refuser une proposition
+    public function reject($id) {
+        $this->updateStatus($id, 'reject');
+    }
 }

@@ -52,5 +52,15 @@ create table exchange_status (
     status_name varchar(50) not null unique
 );
 
-
+create table product_exchange (
+    id int primary key auto_increment,
+    myproduct_id int not null,
+    desiredproduct_id int not null,
+    exchange_date datetime not null,
+    foreign key (myproduct_id) references product(id),
+    foreign key (desiredproduct_id) references product(id),
+    id_status int not null,
+    foreign key (id_status) references exchange_status(id)
+    
+);
 

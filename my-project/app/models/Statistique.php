@@ -12,7 +12,7 @@ class Statistique
 
     public function getExchangeCount()
     {
-        return (int) $this->db->query("SELECT COUNT(*) FROM product_exchange where status=2")->fetchColumn();
+        return (int) $this->db->query("SELECT COUNT(*) FROM product_exchange where id_status=2")->fetchColumn();
     }
 
     public function getUserCount()

@@ -1,6 +1,7 @@
 <?php
 
 use app\controllers\AdminController;
+use app\controllers\UserController;
 use app\controllers\ProductExchangeController;
 use app\controllers\ProductController;
 use app\controllers\CategorieController;

@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Produits</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-
-<div class="container mt-5">
+<?php $title = 'Mes Produits'; include __DIR__ . '/../layout/header.php'; ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Liste des Produits</h1>
+        <h1>Mes Produits</h1>
         <a href="<?= BASE_URL ?>products/create" class="btn btn-success">+ Nouveau Produit</a>
     </div>
 
@@ -54,8 +44,4 @@
     <?php else: ?>
         <div class="alert alert-info">Aucun produit trouvé.</div>
     <?php endif; ?>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include __DIR__ . '/../layout/footer.php'; ?>

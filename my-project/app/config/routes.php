@@ -1,8 +1,11 @@
 <?php
 
 use app\controllers\AdminController;
+use app\controllers\UserController;
 use app\controllers\ProductController;
+use app\controllers\ProductExchangeController;
 use app\models\Categorie;
+use app\models\Product;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -14,15 +17,30 @@ use flight\net\Router;
 
 // This wraps all routes in the group with the SecurityHeadersMiddleware
 $router->group('', function(Router $router) use ($app) {
-	$router->get('/', function() use ($app) {
-		$app->render('admin/index', [ 'message' => 'Welcome to your FlightPHP app! You are gonna do great things!' ]);
+	// =============================================
+	// Route de login utilisateur (page d'accueil)
+	// =============================================
+	$userController = new UserController($app);
+	
+	$router->get('/', [ $userController, 'loginPage' ]);
+	$router->post('/user/login', [ $userController, 'loginController' ]);
+	$router->get('/user/logout', [ $userController, 'logout' ]);
+	
+	// Routes d'inscription
+	$router->get('/user/register', [ $userController, 'registerPage' ]);
+	$router->post('/user/register', [ $userController, 'registerController' ]);
+
+	// =============================================
+	// Routes Admin
+	// =============================================
+	$adminController = new AdminController($app);
+	
+	$router->get('/admin', function() use ($app) {
+		$app->render('admin/index', [ 'message' => 'Connexion administrateur' ]);
 	});
-	$router->post('/admin/login',[ AdminController::class, 'loginController' ]);
+	$router->post('/admin/login', [ $adminController, 'loginController' ]);
 	$router->get('/admin/dashbord', function() use ($app) {
 		$app->render('admin/dashbord', [ 'message' => 'Welcome to the admin dashboard!' ]);
-	});
-	$router->get('/user/login', function() use ($app) {
-		$app->render('user/login', [ 'message' => 'Welcome to the user login page!' ]);
 	});
 
 	// =============================================
@@ -33,9 +51,15 @@ $router->group('', function(Router $router) use ($app) {
 	// Liste des produits
 	$router->get('/products', [ $productController, 'index' ]);
 
+	// Liste des produits avec leur propriétaire
+	$router->get('/products-with-owner', [ $productController, 'listWithOwner' ]);
+
+	// Liste des produits d'un utilisateur
+	$router->get('/user/@id/products', [ $productController, 'userProducts' ]);
+
 	// Formulaire de création (affichage)
 	$router->get('/products/create', function() use ($app) {
-		$categorieModel = new \app\models\Categorie($app->db());
+		$categorieModel = new app\models\Categorie($app->db());
 		$categories = $categorieModel->getAll();
 		$app->render('product/form.php', [ 'categories' => $categories ]);
 	});
@@ -45,8 +69,8 @@ $router->group('', function(Router $router) use ($app) {
 
 	// Formulaire de modification (affichage)
 	$router->get('/products/edit/@id', function($id) use ($app) {
-		$productModel = new \app\models\Product($app->db());
-		$categorieModel = new \app\models\Categorie($app->db());
+		$productModel = new Product($app->db());
+		$categorieModel = new Categorie($app->db());
 		$product = $productModel->getById($id);
 		$categories = $categorieModel->getAll();
 		$app->render('product/form.php', [ 'product' => $product, 'categories' => $categories ]);
@@ -61,24 +85,16 @@ $router->group('', function(Router $router) use ($app) {
 	// Afficher un produit (détails) — doit être après les routes plus spécifiques
 	$router->get('/products/@id', [ $productController, 'show' ]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	// Gestion des échanges
+	$exchangeController = new \app\controllers\ProductExchangeController($app->db());
+	$router->post('/exchange/propose', [ $exchangeController, 'propose' ]);
+	$router->get('/exchange/received', [ $exchangeController, 'received' ]);
+	$router->get('/exchange/accept/@id', function($id) use ($exchangeController) {
+		$exchangeController->updateStatus($id, 'accept');
+	});
+	$router->get('/exchange/refuse/@id', function($id) use ($exchangeController) {
+		$exchangeController->updateStatus($id, 'refuse');
+	});
 
 
 	// $router->get('/', function() use ($app) {

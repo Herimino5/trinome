@@ -1,37 +1,3 @@
-create database trinome_prepas;
-use trinome_prepas;
-create table admin (
-    id int primary key auto_increment,
-    adminname varchar(50) not null unique,
-    password varchar(255) not null
-);
-INSERT INTO admin (adminname, password)
-VALUES (
-  'admin',
-  'admin'
-);
-create table user (
-    id int primary key auto_increment,
-    username varchar(50) not null unique,
-    password varchar(255) not null,
-    email varchar(100) not null unique,
-    phone varchar(15) not null unique
-);
-
--- Insertion d'utilisateurs fictifs (mot de passe: password123)
-INSERT INTO user (username, password, email, phone) VALUES
-('jean_dupont', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'jean.dupont@email.com', '0601020304'),
-('marie_martin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'marie.martin@email.com', '0612345678'),
-('pierre_blanc', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pierre.blanc@email.com', '0623456789'),
-('sophie_lefebvre', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'sophie.lefebvre@email.com', '0634567890'),
-('lucas_moreau', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'lucas.moreau@email.com', '0645678901');
-
-create table category (
-    id int primary key auto_increment,
-    name varchar(50) not null unique,
-    description varchar(255) not null,
-    image_ varchar(255) not null
-);
 
 -- Insertion de catégories
 INSERT INTO category (name, description, image_) VALUES
@@ -41,16 +7,6 @@ INSERT INTO category (name, description, image_) VALUES
 ('Sports & Loisirs', 'Équipements sportifs et articles de loisirs', 'sports.jpg'),
 ('Livres & Média', 'Livres, musique, films et jeux', 'livres.jpg'),
 ('Beauté & Santé', 'Produits de beauté et de santé', 'beaute.jpg');
-
-create table product (
-    id int primary key auto_increment,
-    name varchar(50) not null unique,
-    description varchar(255) not null,
-    price decimal(10, 2) not null,
-    category_id int not null,
-    product_image varchar(255) not null,
-    foreign key (category_id) references category(id)
-);
 
 -- Insertion de produits
 INSERT INTO product (name, description, price, category_id, product_image) VALUES
@@ -96,7 +52,13 @@ INSERT INTO product (name, description, price, category_id, product_image) VALUE
 ('Crème solaire SPF 50', 'Protection solaire visage et corps', 24.99, 6, 'creme-solaire.jpg'),
 ('Montre Fitbit', 'Montre connectée suivi santé', 199.99, 6, 'fitbit.jpg');
 
-
+create table product_user (
+    id int primary key auto_increment,
+    product_id int not null,
+    user_id int not null,
+    foreign key (product_id) references product(id),
+    foreign key (user_id) references user(id)
+);
 
 -- Distribution des produits entre les utilisateurs
 INSERT INTO product_user (product_id, user_id) VALUES
@@ -113,19 +75,8 @@ INSERT INTO product_user (product_id, user_id) VALUES
 -- Répartition supplémentaire (chaque user reçoit aussi un produit d'une autre catégorie)
 (6, 1), (11, 2), (16, 3), (21, 4), (1, 5);
 
--- Vue pour récupérer les produits avec leur propriétaire
-CREATE VIEW product_with_owner AS
-SELECT p.id AS product_id, p.name AS product_name, p.description, p.price, p.product_image,
-       c.name AS category_name, u.id AS user_id, u.username AS owner_name, u.email, u.phone
-FROM product p
-JOIN category c ON p.category_id = c.id
-JOIN product_user pu ON p.id = pu.product_id
-JOIN user u ON pu.user_id = u.id;
-
-create table product_user (
-    id int primary key auto_increment,
-    product_id int not null,
-    user_id int not null,
-    foreign key (product_id) references product(id),
-    foreign key (user_id) references user(id)
-);
+insert into exchange_status (status_name) values
+('En attente'),
+('Accepté'),
+('Refusé'),
+('Terminé');

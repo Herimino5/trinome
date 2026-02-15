@@ -1,7 +1,7 @@
 <?php
 namespace app\models;
 
-class Category
+class Categorie
 {
     private $db;
 

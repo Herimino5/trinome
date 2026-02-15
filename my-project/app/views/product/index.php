@@ -4,6 +4,43 @@
         <a href="<?= BASE_URL ?>products/create" class="btn btn-success">+ Nouveau Produit</a>
     </div>
 
+    <!-- Barre de recherche -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Rechercher des produits</h5>
+            <form method="GET" action="<?= BASE_URL ?>products" class="row g-3">
+                <div class="col-md-6">
+                    <label for="keyword" class="form-label">Mot-clé (titre)</label>
+                    <input type="text" class="form-control" id="keyword" name="keyword" 
+                           placeholder="Rechercher par titre..." 
+                           value="<?= htmlspecialchars($keyword ?? '') ?>">
+                </div>
+                <div class="col-md-4">
+                    <label for="category_id" class="form-label">Catégorie</label>
+                    <select class="form-select" id="category_id" name="category_id">
+                        <option value="">Toutes les catégories</option>
+                        <?php if (!empty($categories)): ?>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= htmlspecialchars($category['id']) ?>" 
+                                    <?= (isset($selectedCategoryId) && $selectedCategoryId == $category['id']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($category['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+                </div>
+            </form>
+            <?php if (!empty($keyword) || !empty($selectedCategoryId)): ?>
+                <div class="mt-3">
+                    <a href="<?= BASE_URL ?>products" class="btn btn-sm btn-outline-secondary">Réinitialiser la recherche</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <div class="mb-4">
         <p class="text-muted">Filtrer les produits par prix de référence:</p>
         <div class="btn-group" role="group">

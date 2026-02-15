@@ -5,6 +5,9 @@
             <a class="nav-link text-white" href="<?= BASE_URL ?>products"><i class="bi bi-box"></i> Mes produits</a>
         </li>
         <li class="nav-item mb-2">
+            <a class="nav-link text-white" href="<?= BASE_URL ?>products/search"><i class="bi bi-search"></i> Recherche</a>
+        </li>
+        <li class="nav-item mb-2">
             <a class="nav-link text-white" href="<?= BASE_URL ?>products-with-owner"><i class="bi bi-people"></i> Tous les produits</a>
         </li>
         <li class="nav-item mb-2">

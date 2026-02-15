@@ -127,4 +127,31 @@ class Product
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    // Rechercher des produits par mot-clé et/ou catégorie (pour l'utilisateur connecté)
+    public function searchByUserProducts($userId, $keyword = '', $categoryId = null) {
+        $sql = "SELECT p.*, c.name AS category_name
+                FROM product p
+                JOIN category c ON p.category_id = c.id
+                JOIN product_user pu ON p.id = pu.product_id
+                WHERE pu.user_id = :user_id";
+        
+        $params = ['user_id' => $userId];
+        
+        if (!empty($keyword)) {
+            $sql .= " AND p.name LIKE :keyword";
+            $params['keyword'] = '%' . $keyword . '%';
+        }
+        
+        if ($categoryId !== null && $categoryId !== '' && $categoryId > 0) {
+            $sql .= " AND p.category_id = :category_id";
+            $params['category_id'] = $categoryId;
+        }
+        
+        $sql .= " ORDER BY p.id DESC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

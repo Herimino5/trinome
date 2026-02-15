@@ -47,16 +47,38 @@ class ProductController {
             return;
         }
         $user_id = $_SESSION['user']['id'];
-        $pdo = Flight::db();
-        $sql = "SELECT p.*, c.name AS category_name
-                FROM product p
-                JOIN category c ON p.category_id = c.id
-                JOIN product_user pu ON p.id = pu.product_id
-                WHERE pu.user_id = :user_id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['user_id' => $user_id]);
-        $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        Flight::render('product/index.php', ['products' => $products]);
+        
+        // Récupérer les paramètres de recherche
+        $keyword = $_GET['keyword'] ?? '';
+        $categoryId = $_GET['category_id'] ?? null;
+        
+        // Si des paramètres de recherche sont fournis, effectuer une recherche
+        if (!empty($keyword) || !empty($categoryId)) {
+            $products = $this->productModel->searchByUserProducts($user_id, $keyword, $categoryId);
+        } else {
+            // Sinon, afficher tous les produits de l'utilisateur
+            $pdo = Flight::db();
+            $sql = "SELECT p.*, c.name AS category_name
+                    FROM product p
+                    JOIN category c ON p.category_id = c.id
+                    JOIN product_user pu ON p.id = pu.product_id
+                    WHERE pu.user_id = :user_id
+                    ORDER BY p.id DESC";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['user_id' => $user_id]);
+            $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        
+        // Récupérer toutes les catégories pour le dropdown
+        $categorieModel = new \app\models\Categorie(Flight::db());
+        $categories = $categorieModel->getAll();
+        
+        Flight::render('product/index.php', [
+            'products' => $products,
+            'categories' => $categories,
+            'keyword' => $keyword,
+            'selectedCategoryId' => $categoryId
+        ]);
     }
 
     // Afficher un produit
@@ -92,7 +114,7 @@ class ProductController {
         $category_id = $_POST['category_id'] ?? 0;
         $product_image = $_POST['product_image'] ?? '';
 
-        if ($this->productModel->update($id, $name, $description, $price, $category_id, $product_image)) {
+        if ($this->productModel->update($id, $name, $description, $price, $category_id)) {
             Flight::redirect('/products');
         } else {
             Flight::render('error.php', ['message' => 'Erreur lors de la mise à jour']);

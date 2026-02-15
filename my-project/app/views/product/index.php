@@ -4,6 +4,13 @@
         <a href="<?= BASE_URL ?>products/create" class="btn btn-success">+ Nouveau Produit</a>
     </div>
 
+    <div class="mb-4">
+        <p class="text-muted">Filtrer les produits par prix de référence:</p>
+        <div class="btn-group" role="group">
+            <a href="<?= BASE_URL ?>products" class="btn btn-outline-secondary">Tous les produits</a>
+        </div>
+    </div>
+
     <?php if (!empty($products) && count($products) > 0): ?>
     <table class="table table-bordered table-striped table-hover">
         <thead class="table-dark">
@@ -30,7 +37,14 @@
                 </td>
                 <td><?= htmlspecialchars($product['name']) ?></td>
                 <td><?= htmlspecialchars($product['description']) ?></td>
-                <td><?= number_format($product['price'], 2, ',', ' ') ?> €</td>
+                <td>
+                    <?= number_format($product['price'], 2, ',', ' ') ?> Ar<br>
+                    <small class="text-muted">
+                        <a href="<?= BASE_URL ?>products/<?= $product['id'] ?>/filter/10" class="text-muted">-/+10%</a>
+                        <span class="text-muted">|</span>
+                        <a href="<?= BASE_URL ?>products/<?= $product['id'] ?>/filter/20" class="text-muted">-/+20%</a>
+                    </small>
+                </td>
                 <td><?= htmlspecialchars($product['category_name'] ?? '—') ?></td>
                 <td>
                     <a href="<?= BASE_URL ?>products/<?= $product['id'] ?>" class="btn btn-sm btn-info">Voir</a>

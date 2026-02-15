@@ -15,12 +15,16 @@ class Product
         $sql = "INSERT INTO product (name, description, price, category_id) 
                 VALUES (:name, :description, :price, :category_id)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        $result = $stmt->execute([
             'name' => $name,
             'description' => $description,
             'price' => $price,
             'category_id' => $category_id
         ]);
+        if ($result) {
+            return $this->db->lastInsertId();
+        }
+        return false;
     }
 
     public function getAll()
@@ -56,5 +60,18 @@ class Product
             'price' => $price,
             'category_id' => $category_id
         ]);
+    }
+
+    // Récupérer les produits avec propriétaire (vue SQL)
+    public function getWithOwner($limit = 10, $offset = 0) {
+        $sql = "SELECT * FROM product_with_owner LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    public function countWithOwner() {
+        return $this->db->query('SELECT COUNT(*) FROM product_with_owner')->fetchColumn();
     }
 }

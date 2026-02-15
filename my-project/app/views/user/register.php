@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
+    <title>Inscription</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -14,15 +14,17 @@
             align-items: center;
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
         }
-        .login-card {
+        .register-card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            max-width: 420px;
+            max-width: 500px;
             width: 100%;
             animation: fadeInUp 0.6s ease;
+            margin: 20px;
         }
         @keyframes fadeInUp {
             from {
@@ -34,24 +36,24 @@
                 transform: translateY(0);
             }
         }
-        .login-header {
+        .register-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 30px;
+            padding: 30px;
             text-align: center;
             color: white;
         }
-        .login-header i {
-            font-size: 4rem;
-            margin-bottom: 15px;
+        .register-header i {
+            font-size: 3rem;
+            margin-bottom: 10px;
             opacity: 0.9;
         }
-        .login-header h3 {
+        .register-header h3 {
             margin: 0;
             font-weight: 600;
             font-size: 1.8rem;
         }
-        .login-body {
-            padding: 40px 35px;
+        .register-body {
+            padding: 35px;
         }
         .form-control {
             border-radius: 10px;
@@ -80,7 +82,7 @@
         .input-group:focus-within .form-control {
             border-color: #667eea;
         }
-        .btn-login {
+        .btn-register {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 10px;
@@ -90,48 +92,13 @@
             transition: all 0.3s;
             color: white;
         }
-        .btn-login:hover {
+        .btn-register:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
             background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
-        .btn-login:active {
+        .btn-register:active {
             transform: translateY(0);
-        }
-        .divider {
-            text-align: center;
-            margin: 25px 0;
-            position: relative;
-        }
-        .divider::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            width: 100%;
-            height: 1px;
-            background: #e0e6ed;
-        }
-        .divider span {
-            background: white;
-            padding: 0 15px;
-            position: relative;
-            color: #a0aec0;
-            font-size: 0.9rem;
-        }
-        .user-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .user-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        .user-link a:hover {
-            color: #764ba2;
-            text-decoration: underline;
         }
         .alert {
             border-radius: 10px;
@@ -141,14 +108,14 @@
 </head>
 <body>
 
-    <div class="login-card">
-        <div class="login-header">
-            <i class="bi bi-shield-lock"></i>
-            <h3>Admin Portal</h3>
-            <p class="mb-0 mt-2" style="opacity: 0.9;">Connexion Administrateur</p>
+    <div class="register-card">
+        <div class="register-header">
+            <i class="bi bi-person-plus-fill"></i>
+            <h3>Inscription</h3>
+            <p class="mb-0 mt-2" style="opacity: 0.9;">Créez votre compte</p>
         </div>
 
-        <div class="login-body">
+        <div class="register-body">
             <?php if (!empty($error)): ?>
                 <div class="alert alert-danger d-flex align-items-center" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -156,39 +123,74 @@
                 </div>
             <?php endif; ?>
 
-            <form method="post" action="<?= BASE_URL ?>admin/login">
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">Nom d'administrateur</label>
+            <?php if (!empty($success)): ?>
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <div><?= htmlspecialchars($success) ?></div>
+                </div>
+            <?php endif; ?>
+
+            <form method="post" action="<?= BASE_URL ?>user/register">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Nom d'utilisateur</label>
                     <div class="input-group">
                         <span class="input-group-text">
                             <i class="bi bi-person-fill text-muted"></i>
                         </span>
-                        <input type="text" name="adminname" class="form-control" placeholder="Entrez votre nom" required autofocus>
+                        <input type="text" name="username" class="form-control" placeholder="Choisissez un nom d'utilisateur" required autofocus value="<?= htmlspecialchars($_POST['username'] ?? '') ?>">
                     </div>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Adresse email</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-envelope-fill text-muted"></i>
+                        </span>
+                        <input type="email" name="email" class="form-control" placeholder="votre.email@exemple.com" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Téléphone</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-telephone-fill text-muted"></i>
+                        </span>
+                        <input type="tel" name="phone" class="form-control" placeholder="0612345678" pattern="[0-9]{10}" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
+                    </div>
+                    <small class="text-muted">Format: 10 chiffres</small>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label fw-semibold">Mot de passe</label>
                     <div class="input-group">
                         <span class="input-group-text">
                             <i class="bi bi-lock-fill text-muted"></i>
                         </span>
-                        <input type="password" name="password" class="form-control" placeholder="Entrez votre mot de passe" required>
+                        <input type="password" name="password" class="form-control" placeholder="Choisissez un mot de passe" required minlength="6">
+                    </div>
+                    <small class="text-muted">Minimum 6 caractères</small>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Confirmer le mot de passe</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-lock-fill text-muted"></i>
+                        </span>
+                        <input type="password" name="password_confirm" class="form-control" placeholder="Confirmez votre mot de passe" required minlength="6">
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-login w-100">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                <button type="submit" class="btn btn-register w-100">
+                    <i class="bi bi-person-check me-2"></i>S'inscrire
                 </button>
             </form>
 
-            <div class="divider">
-                <span>ou</span>
-            </div>
-
-            <div class="user-link">
-                <i class="bi bi-person-plus me-1"></i>
-                <a href="<?= BASE_URL ?>">Accès utilisateur</a>
+            <div class="text-center mt-3">
+                <span class="text-muted">Déjà un compte ?</span>
+                <a href="<?= BASE_URL ?>" class="text-decoration-none fw-semibold">Se connecter</a>
             </div>
         </div>
     </div>

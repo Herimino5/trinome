@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails du Produit</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>css/products.css" rel="stylesheet">
 </head>
 <body>
 
@@ -24,10 +25,22 @@
                 <li class="list-group-item"><strong>Prix :</strong> <?= number_format($product['price'], 2, ',', ' ') ?> €</li>
                 <li class="list-group-item"><strong>Catégorie ID :</strong> <?= htmlspecialchars($product['category_id']) ?></li>
             </ul>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 mb-3">
                 <a href="<?= BASE_URL ?>products/edit/<?= $product['id'] ?>" class="btn btn-warning">Modifier</a>
                 <a href="<?= BASE_URL ?>products/delete/<?= $product['id'] ?>" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</a>
             </div>
+            <form method="post" action="<?= BASE_URL ?>exchange/propose">
+                <input type="hidden" name="desiredproduct_id" value="<?= $product['id'] ?>">
+                <div class="mb-2">
+                    <label for="myproduct_id" class="form-label">Choisir un de vos produits à échanger :</label>
+                    <select name="myproduct_id" id="myproduct_id" class="form-select" required>
+                        <?php foreach ($myProducts as $mp): ?>
+                            <option value="<?= $mp['id'] ?>"><?= htmlspecialchars($mp['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Proposer un échange</button>
+            </form>
         </div>
     </div>
     <?php else: ?>
@@ -35,6 +48,6 @@
     <?php endif; ?>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= BASE_URL ?>js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

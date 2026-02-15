@@ -66,6 +66,7 @@ $router->group('', function(Router $router) use ($app) {
 	$router->get('/products-with-owner', [ $productController, 'listWithOwner' ]);
 
 	// Routes spécifiques AVANT les générales
+	$router->get('/products/search', [ $productController, 'search' ]);
 	$router->get('/products/history/@id', [ $productController, 'history' ]);
 	$router->get('/products/create', function() use ($app) {
 		$categorieModel = new \app\models\Categorie($app->db());

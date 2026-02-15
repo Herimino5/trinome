@@ -200,5 +200,28 @@ class ProductController {
             'filteredProducts' => $filteredProducts
         ]);
     }
+
+    // Rechercher tous les produits (peu importe le propriétaire)
+    public function search() {
+        session_start();
+        
+        // Récupérer les paramètres de recherche
+        $keyword = $_GET['keyword'] ?? '';
+        $categoryId = $_GET['category_id'] ?? null;
+        
+        // Effectuer la recherche globale
+        $products = $this->productModel->searchAllProducts($keyword, $categoryId);
+        
+        // Récupérer toutes les catégories pour le dropdown
+        $categorieModel = new \app\models\Categorie(Flight::db());
+        $categories = $categorieModel->getAll();
+        
+        Flight::render('product/search.php', [
+            'products' => $products,
+            'categories' => $categories,
+            'keyword' => $keyword,
+            'selectedCategoryId' => $categoryId
+        ]);
+    }
 }
 ?>

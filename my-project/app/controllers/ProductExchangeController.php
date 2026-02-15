@@ -2,6 +2,7 @@
 namespace app\controllers;
 use app\models\ProductExchange;
 use app\models\ProductUser;
+use app\models\ExchangeHistory;
 use Flight;
 class ProductExchangeController {
     private $exchangeModel;
@@ -33,6 +34,12 @@ class ProductExchangeController {
         Flight::render('exchange/received.php', ['proposals' => $proposals]);
     }
 
+    // Voir les échanges acceptés
+    public function accepted() {
+        $exchanges = $this->exchangeModel->getAcceptedExchanges();
+        Flight::render('exchange/accepted.php', ['exchanges' => $exchanges]);
+    }
+
     // Accepter ou refuser
     public function updateStatus($id, $action) {
         // 2 = accepté, 3 = refusé
@@ -42,6 +49,17 @@ class ProductExchangeController {
             // Échanger les owners dans product_user
             $exchange = $this->exchangeModel->getById($id);
             if ($exchange) {
+                $pdo = Flight::db();
+                $historyModel = new ExchangeHistory($pdo);
+                $stmt = $pdo->prepare("SELECT user_id FROM product_user WHERE product_id = :pid");
+                $stmt->execute(['pid' => $exchange['myproduct_id']]);
+                $owner1 = $stmt->fetchColumn();
+                $stmt->execute(['pid' => $exchange['desiredproduct_id']]);
+                $owner2 = $stmt->fetchColumn();
+                if ($owner1 && $owner2) {
+                    $historyModel->create($exchange['id'], $exchange['myproduct_id'], $owner1, $owner2, $exchange['exchange_date']);
+                    $historyModel->create($exchange['id'], $exchange['desiredproduct_id'], $owner2, $owner1, $exchange['exchange_date']);
+                }
                 $this->productUserModel->swapOwners($exchange['myproduct_id'], $exchange['desiredproduct_id']);
             }
         }

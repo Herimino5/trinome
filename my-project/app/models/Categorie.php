@@ -35,6 +35,18 @@ class Categorie
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public function update($id, $name, $description, $image)
+    {
+        $sql = "UPDATE category SET name = :name, description = :description, image_ = :image WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            'id' => $id,
+            'name' => $name,
+            'description' => $description,
+            'image' => $image
+        ]);
+    }
+
     public function delete($id)
     {
         $stmt = $this->db->prepare("DELETE FROM category WHERE id = :id");

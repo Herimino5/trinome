@@ -2,6 +2,7 @@
 namespace app\controllers;
 use app\models\Product;
 use app\models\ProductUser;
+use app\models\ProductExchange;
 use Flight;
 class ProductController {
     private $productModel;
@@ -100,12 +101,14 @@ class ProductController {
 
     // Liste des produits avec leur propriétaire (vue + pagination)
     public function listWithOwner() {
+        session_start();
+        $userId = $_SESSION['user']['id'] ?? null;
         $productModel = $this->productModel;
         $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
         $perPage = 10;
         $offset = ($page - 1) * $perPage;
-        $total = $productModel->countWithOwner();
-        $products = $productModel->getWithOwner($perPage, $offset);
+        $total = $productModel->countWithOwner($userId);
+        $products = $productModel->getWithOwner($perPage, $offset, $userId);
         $totalPages = ceil($total / $perPage);
         \Flight::render('product/list_with_owner.php', [
             'products' => $products,
@@ -114,22 +117,38 @@ class ProductController {
         ]);
     }
 
+    public function history($id) {
+        $product = $this->productModel->getById($id);
+        if (!$product) {
+            Flight::render('error.php', ['message' => 'Produit introuvable']);
+            return;
+        }
+        $exchangeModel = new ProductExchange(Flight::db());
+        $rawHistory = $exchangeModel->getAcceptedHistoryByProduct($id);
+        $history = [];
+        foreach ($rawHistory as $row) {
+            $isMyProduct = ((int) $row['myproduct_id'] === (int) $id);
+            $history[] = [
+                'exchanged_at' => $row['exchange_date'],
+                'from_username' => $isMyProduct ? $row['proposer'] : $row['receiver'],
+                'to_username' => $isMyProduct ? $row['receiver'] : $row['proposer']
+            ];
+        }
+        Flight::render('product/history.php', [
+            'product' => $product,
+            'history' => $history
+        ]);
+    }
+
     // Liste des produits d'un utilisateur
     public function userProducts($user_id) {
-        $pdo = Flight::db();
-        $sql = "SELECT p.id AS product_id, p.name AS product_name, p.description, p.price, p.product_image,
-                       c.name AS category_name
-                FROM product p
-                JOIN category c ON p.category_id = c.id
-                JOIN product_user pu ON p.id = pu.product_id
-                WHERE pu.user_id = :user_id";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['user_id' => $user_id]);
-        $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        // Récupérer info utilisateur
-        $userStmt = $pdo->prepare("SELECT * FROM user WHERE id = :id");
-        $userStmt->execute(['id' => $user_id]);
-        $user = $userStmt->fetch(\PDO::FETCH_ASSOC);
+        $userModel = new \app\models\User(Flight::db());
+        $user = $userModel->getById($user_id);
+        if (!$user) {
+            Flight::render('error.php', ['message' => 'Utilisateur introuvable']);
+            return;
+        }
+        $products = $this->productModel->getByUserId($user_id);
         Flight::render('product/user_products.php', ['products' => $products, 'user' => $user]);
     }
 }

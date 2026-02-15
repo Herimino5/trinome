@@ -98,4 +98,33 @@ class Product
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    // Récupérer les produits filtrés par prix (±10%, ±20%)
+    public function getFilteredByPrice($referencePrice, $percentage, $excludeUserId = null) {
+        $minPrice = $referencePrice * (1 - $percentage / 100);
+        $maxPrice = $referencePrice * (1 + $percentage / 100);
+        
+        $sql = "SELECT DISTINCT p.*, c.name AS category_name, pu.user_id
+                FROM product p
+                JOIN category c ON p.category_id = c.id
+                JOIN product_user pu ON p.id = pu.product_id
+                WHERE p.price >= :minPrice AND p.price <= :maxPrice";
+        
+        if ($excludeUserId !== null) {
+            $sql .= " AND pu.user_id <> :excludeUserId";
+        }
+        
+        $sql .= " ORDER BY p.price ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':minPrice', $minPrice);
+        $stmt->bindValue(':maxPrice', $maxPrice);
+        
+        if ($excludeUserId !== null) {
+            $stmt->bindValue(':excludeUserId', $excludeUserId);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

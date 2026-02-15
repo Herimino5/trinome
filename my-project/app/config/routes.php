@@ -88,6 +88,9 @@ $router->group('', function(Router $router) use ($app) {
 	// Créer un produit (traitement)
 	$router->post('/products/create', [ $productController, 'create' ]);
 
+	// Filtrer les produits par prix (±10%, ±20%)
+	$router->get('/products/@id/filter/@percentage', [ $productController, 'filteredByPrice' ]);
+
 	// Afficher un produit (détails) — doit être après les routes plus spécifiques
 	$router->get('/products/@id', [ $productController, 'show' ]);
 

@@ -17,6 +17,18 @@ class ProductExchange {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function getAcceptedExchanges() {
+        $sql = "SELECT * FROM exchange_accepted_view";
+        return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getAcceptedHistoryByProduct($productId) {
+        $sql = "SELECT * FROM exchange_accepted_view WHERE myproduct_id = :pid OR desiredproduct_id = :pid ORDER BY exchange_date DESC, id DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['pid' => $productId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function updateStatus($exchange_id, $status_id) {
         $sql = "UPDATE product_exchange SET id_status = :status WHERE id = :id";
         $stmt = $this->db->prepare($sql);

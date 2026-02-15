@@ -63,3 +63,4 @@ create table product_exchange (
     foreign key (id_status) references exchange_status(id)
     
 );
+

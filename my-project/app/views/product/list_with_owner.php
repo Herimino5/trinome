@@ -18,6 +18,9 @@
                     <i class="bi bi-envelope"></i> <?= htmlspecialchars($product['email']) ?><br>
                     <i class="bi bi-telephone"></i> <?= htmlspecialchars($product['phone']) ?>
                 </div>
+                <div class="mt-2">
+                    <a class="btn btn-sm btn-outline-primary w-100" href="<?= BASE_URL ?>products/history/<?= $product['product_id'] ?>">Voir l historique</a>
+                </div>
             </div>
         </div>
         </a>

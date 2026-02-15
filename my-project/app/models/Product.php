@@ -63,15 +63,39 @@ class Product
     }
 
     // Récupérer les produits avec propriétaire (vue SQL)
-    public function getWithOwner($limit = 10, $offset = 0) {
-        $sql = "SELECT * FROM product_with_owner LIMIT :limit OFFSET :offset";
+    public function getWithOwner($limit = 10, $offset = 0, $excludeUserId = null) {
+        $sql = "SELECT * FROM product_with_owner";
+        if ($excludeUserId !== null) {
+            $sql .= " WHERE user_id <> :exclude_user_id";
+        }
+        $sql .= " LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($sql);
+        if ($excludeUserId !== null) {
+            $stmt->bindValue(':exclude_user_id', $excludeUserId, \PDO::PARAM_INT);
+        }
         $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-    public function countWithOwner() {
-        return $this->db->query('SELECT COUNT(*) FROM product_with_owner')->fetchColumn();
+    public function countWithOwner($excludeUserId = null) {
+        if ($excludeUserId === null) {
+            return $this->db->query('SELECT COUNT(*) FROM product_with_owner')->fetchColumn();
+        }
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM product_with_owner WHERE user_id <> :exclude_user_id');
+        $stmt->execute(['exclude_user_id' => $excludeUserId]);
+        return $stmt->fetchColumn();
+    }
+
+    public function getByUserId($userId) {
+        $sql = "SELECT p.id AS product_id, p.name AS product_name, p.description, p.price, p.product_image,
+                       c.name AS category_name
+                FROM product p
+                JOIN category c ON p.category_id = c.id
+                JOIN product_user pu ON p.id = pu.product_id
+                WHERE pu.user_id = :user_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['user_id' => $userId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

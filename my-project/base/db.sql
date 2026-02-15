@@ -9,8 +9,20 @@ INSERT INTO admin (adminname, password)
 VALUES (
   'admin',
   'admin'
+
+create table product_exchange_history (
+    id int primary key auto_increment,
+    exchange_id int not null,
+    product_id int not null,
+    from_user_id int not null,
+    to_user_id int not null,
+    exchanged_at datetime not null,
+    foreign key (exchange_id) references product_exchange(id),
+    foreign key (product_id) references product(id),
+    foreign key (from_user_id) references user(id),
+    foreign key (to_user_id) references user(id)
 );
-create table user (
+);
     id int primary key auto_increment,
     username varchar(50) not null unique,
     password varchar(255) not null,

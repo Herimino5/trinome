@@ -151,5 +151,32 @@ class ProductController {
         $products = $this->productModel->getByUserId($user_id);
         Flight::render('product/user_products.php', ['products' => $products, 'user' => $user]);
     }
+
+    // Afficher les produits filtrés par prix (±10%, ±20%)
+    public function filteredByPrice($productId, $percentage) {
+        session_start();
+        
+        // Récupérer le produit de référence
+        $referenceProduct = $this->productModel->getById($productId);
+        if (!$referenceProduct) {
+            Flight::render('error.php', ['message' => 'Produit introuvable']);
+            return;
+        }
+        
+        $userId = $_SESSION['user']['id'] ?? null;
+        
+        // Récupérer les produits filtrés
+        $filteredProducts = $this->productModel->getFilteredByPrice(
+            $referenceProduct['price'], 
+            $percentage, 
+            $userId
+        );
+        
+        Flight::render('product/filtered_by_price.php', [
+            'referenceProduct' => $referenceProduct,
+            'percentage' => $percentage,
+            'filteredProducts' => $filteredProducts
+        ]);
+    }
 }
 ?>

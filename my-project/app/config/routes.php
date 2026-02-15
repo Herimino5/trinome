@@ -19,7 +19,11 @@ use flight\net\Router;
 // This wraps all routes in the group with the SecurityHeadersMiddleware
 $router->group('', function(Router $router) use ($app) {
 	$router->get('/', function() use ($app) {
-		$app->render('admin/index', [ 'message' => 'Welcome to your FlightPHP app! You are gonna do great things!' ]);
+		$app->render('index', []);
+	});
+	
+	$router->get('/admin', function() use ($app) {
+		$app->render('admin/index', []);
 	});
 	$router->post('/admin/login',[ AdminController::class, 'loginController' ]);
 	$router->get('/admin/dashbord', function() use ($app) {
